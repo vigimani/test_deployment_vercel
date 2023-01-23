@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useAccount, useProvider, useBalance } from "wagmi";
 import { useState, useEffect } from "react";
-import Contract from "../../artifacts/contracts/Bank.sol/Bank";
+import Contract from "./../artifacts/contracts/Bank.sol/Bank"
 import { ethers } from "ethers";
 
 export default function Eventslist() {

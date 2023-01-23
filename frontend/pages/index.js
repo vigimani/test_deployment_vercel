@@ -1,12 +1,10 @@
 import Head from 'next/head'
 import { Header } from '@/components/Header'
-import Contract from '../../artifacts/contracts/Bank.sol/Bank'
-import { useAccount, useProvider, useSigner, useContractRead } from 'wagmi'
+import Contract from "./../artifacts/contracts/Bank.sol/Bank"
+import { useAccount, useProvider, useSigner } from 'wagmi'
 import { List, Heading, Spinner, Center, Flex, Box, Text, Input, Button, useToast } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { TransactionDescription } from 'ethers/lib/utils.js'
-import Events from '@/components/Events';
 import Eventslist from '@/components/Eventslist';
 
 export default function Home() {
