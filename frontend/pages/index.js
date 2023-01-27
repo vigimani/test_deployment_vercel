@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { Header } from '@/components/Header'
-import Contract from "./../artifacts/contracts/Bank.sol/Bank"
+// import Contract from "./../artifacts/contracts/Bank.sol/Bank"
 import { useAccount, useProvider, useSigner } from 'wagmi'
 import { List, Heading, Spinner, Center, Flex, Box, Text, Input, Button, useToast } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
@@ -8,6 +8,118 @@ import { ethers } from 'ethers';
 import Eventslist from '@/components/Eventslist';
 
 export default function Home() {
+
+
+  let abi = [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "when",
+          "type": "uint256"
+        }
+      ],
+      "name": "etherDeposited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "when",
+          "type": "uint256"
+        }
+      ],
+      "name": "etherWithdrawed",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "deposit",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getBalanceAndLastDeposit",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastDeposit",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Bank.Account",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getBalanceOfUser",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
 
   const contractAddress = "0xf389A9478da87Dd46C5ED9AD4D481b9A45Bc488a"
   const { address, isConnected } = useAccount()
@@ -49,7 +161,7 @@ export default function Home() {
   const updateBalance = async() => {
       // let zz = await contractRead
       // console.log((zz.data).toString())
-      const contract = await new ethers.Contract(contractAddress, Contract.abi, provider)
+      const contract = await new ethers.Contract(contractAddress, abi, provider)
       console.log(provider)
       console.log(contract)
       let a = await contract.connect(address).getBalanceOfUser()
@@ -60,7 +172,7 @@ export default function Home() {
   const deposit = async() => {
     setIsLoading(true)
     try {
-      const contract = new ethers.Contract(contractAddress, Contract.abi, signer)
+      const contract = new ethers.Contract(contractAddress, abi, signer)
       let depositAmountETH = ethers.utils.parseEther(depositAmount)
       let transaction = await contract.deposit({value : depositAmountETH})
       await transaction.wait(1)
@@ -90,7 +202,7 @@ export default function Home() {
   const withdraw = async() => {
     setIsLoading(true)
     try {
-      const contract = new ethers.Contract(contractAddress, Contract.abi, signer)
+      const contract = new ethers.Contract(contractAddress, abi, signer)
       let withdrawAmountETH = ethers.utils.parseEther(withdrawAmount)
       let transaction = await contract.withdraw(withdrawAmountETH)
       await transaction.wait(1)

@@ -10,7 +10,6 @@ import {
 } from "@chakra-ui/react";
 import { useAccount, useProvider, useBalance } from "wagmi";
 import { useState, useEffect } from "react";
-import Contract from "./../artifacts/contracts/Bank.sol/Bank"
 import { ethers } from "ethers";
 
 export default function Eventslist() {
@@ -19,10 +18,116 @@ export default function Eventslist() {
   const { address, isConnected } = useAccount();
   const provider = useProvider();
   const [transactions, setTransactions] = useState([]);
-//   const { data } = useBalance({
-//         address: address,
-//         watch: true,
-//   })
+  let abi = [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "when",
+          "type": "uint256"
+        }
+      ],
+      "name": "etherDeposited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "when",
+          "type": "uint256"
+        }
+      ],
+      "name": "etherWithdrawed",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "deposit",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getBalanceAndLastDeposit",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastDeposit",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Bank.Account",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getBalanceOfUser",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
 
   //CHAKRA-UI
   const toast = useToast()
@@ -33,7 +138,7 @@ export default function Eventslist() {
   }, []);
 
   useEffect(() => {
-    const contract = new ethers.Contract(contractAddress, Contract.abi, provider)
+    const contract = new ethers.Contract(contractAddress, abi, provider)
     contract.on("etherDeposited", (account, amount) => {
         toast({
             title: 'Deposit Event',
@@ -55,7 +160,7 @@ export default function Eventslist() {
   const updatetransactions = async () => {
     const contract = await new ethers.Contract(
       contractAddress,
-      Contract.abi,
+      abi,
       provider
     );
     const filter = {
